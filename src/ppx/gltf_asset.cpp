@@ -23,9 +23,12 @@ namespace gltf {
 
 using json = nlohmann::json;
 
-Geometry& gltf::Scene::TempGetFirstGeometry()
+Scene::Scene()
 {
-    return mTempFirstGeometry;
+}
+
+Scene::~Scene()
+{
 }
 
 Asset::Asset()
@@ -65,13 +68,18 @@ Result Asset::LoadFile(const std::filesystem::path& path, Asset* pAsset)
     }
 
     json assetJSON;
+    uint32_t glbBufferLength = 0;
+    char *glbBuffer = nullptr;
 
     PPX_LOG_DEBUG("trying to load: " << path << " first character: " << f.peek());
 
     if (f.peek() == '{') {
         // glTF JSON file
         // TODO: handle whitespace at beginning of file?
-        json::parse(f);
+        assetJSON = json::parse(f);
+        if (assetJSON.is_discarded()) {
+          return ppx::ERROR_GLTF_FILE_INVALID_FORMAT;
+        }
     }
     else {
         // glb binary file
@@ -96,35 +104,78 @@ Result Asset::LoadFile(const std::filesystem::path& path, Asset* pAsset)
 
         PPX_LOG_DEBUG("glTF binary file: " << (char)header << " " << version << " " << length);
 
-        PPX_LOG_DEBUG("first char of chunk: " << std::hex << f.peek());
+        int chunkCount = 0;
+        while (f.peek() != -1) {
+            if (chunkCount++ >= 2) {
+              // There must be only two chunks
+              return ppx::ERROR_GLTF_FILE_INVALID_FORMAT;
+            }
+            uint32_t chunkLength;
+            uint32_t chunkType;
 
-        // while (f.peek() != -1) {
-        uint32_t chunkLength;
-        uint32_t chunkType;
+            f.read(reinterpret_cast<char*>(&chunkLength), sizeof(chunkLength));
+            f.read(reinterpret_cast<char*>(&chunkType), sizeof(chunkType));
 
-        PPX_LOG_DEBUG("peek: " << std::hex << f.peek());
+            PPX_LOG_DEBUG("chunk of length " << chunkLength);
 
-        f.read(reinterpret_cast<char*>(&chunkLength), sizeof(chunkLength));
-        PPX_LOG_DEBUG("peek: " << std::hex << f.peek());
-        f.read(reinterpret_cast<char*>(&chunkType), sizeof(chunkType));
+            char* chunkData = new char[chunkLength];
 
-        PPX_LOG_DEBUG("peek: " << std::hex << f.peek());
+            f.read(chunkData, chunkLength);
 
-        PPX_LOG_DEBUG("chunk of type " << chunkType << " and length " << chunkLength);
+            switch (chunkType) {
+                case 0x4E4F534A: // JSON
+                    PPX_LOG_DEBUG("handling as JSON");
+                    if (!assetJSON.is_null()) {
+                      // There can only be one JSON chunk
+                      return ppx::ERROR_GLTF_FILE_INVALID_FORMAT;
+                    }
 
-        uint8_t* chunkData = new uint8_t[chunkLength];
+                    assetJSON = json::parse(chunkData, chunkData + chunkLength);
+                    if (assetJSON.is_discarded()) {
+                      return ppx::ERROR_GLTF_FILE_INVALID_FORMAT;
+                    }
 
-        f.read(reinterpret_cast<char*>(&chunkData), chunkLength);
-
-        switch (chunkType) {
-            case 0x4E4F534A: // JSON
-                PPX_LOG_DEBUG("handling as JSON");
-                break;
-            case 0x004E4942: // BIN
-                PPX_LOG_DEBUG("handling as BIN");
-                break;
+                    delete[] chunkData;
+                    break;
+                case 0x004E4942: // BIN
+                    PPX_LOG_DEBUG("handling as BIN");
+                    if (assetJSON.is_null()) {
+                      // The BIN chunk *must* be second
+                      return ppx::ERROR_GLTF_FILE_INVALID_FORMAT;
+                    }
+                    glbBufferLength = chunkLength;
+                    glbBuffer = chunkData;
+                    break;
+                default:
+                    return ppx::ERROR_GLTF_FILE_INVALID_FORMAT;
+            }
         }
-        // }
+
+        if (chunkCount == 0) {
+          return ppx::ERROR_GLTF_FILE_NO_DATA;
+        }
+    }
+
+    if (assetJSON["asset"]["version"] != "2.0") {
+      // We only support glTF 2.0
+      return ppx::ERROR_GLTF_FILE_INVALID_FORMAT;
+    }
+
+    // extract necessary data from JSON
+    Asset asset;
+    asset.mainSceneIndex = assetJSON["scene"];
+
+    for (auto& sceneJSON : assetJSON["scenes"]) {
+      PPX_LOG_DEBUG("Loading scene " << sceneJSON["name"]);
+      for (auto& nodeId : sceneJSON["nodes"]) {
+        auto& node = assetJSON["nodes"][nodeId.get<size_t>()];
+
+        // TODO: get mesh and translation from node, add them to scene
+      }
+    }
+
+    if (glbBuffer != nullptr) {
+      delete[] glbBuffer;
     }
 
     double fnEndTime = timer.SecondsSinceStart();

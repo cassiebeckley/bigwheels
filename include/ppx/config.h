@@ -21,7 +21,7 @@
 #       define VC_EXTRALEAN
 #   endif
 #   if !defined(WIN32_LEAN_AND_MEAN)
-#       define WIN32_LEAN_AND_MEAN 
+#       define WIN32_LEAN_AND_MEAN
 #   endif
 #   if !defined(NOMINMAX)
 #       define NOMINMAX
@@ -159,6 +159,7 @@ enum Result
 
     ERROR_GLTF_FILE_LOAD_FAILED    = -2600,
     ERROR_GLTF_FILE_INVALID_FORMAT = -2601,
+    ERROR_GLTF_FILE_NO_DATA        = -2602,
 
     ERROR_WINDOW_EVENTS_ALREADY_REGISTERED = -3000,
     ERROR_IMGUI_INITIALIZATION_FAILED      = -3001,

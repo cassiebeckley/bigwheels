@@ -27,10 +27,10 @@ namespace gltf {
 class Scene
 {
 public:
-    Geometry& TempGetFirstGeometry();
+    Scene();
+    ~Scene();
 
 private:
-    Geometry& mTempFirstGeometry;
 };
 
 //! @class Asset
@@ -48,6 +48,7 @@ public:
     static Asset  LoadFile(const std::filesystem::path& path);
 
 private:
+    std::uint32_t mainSceneIndex;
     std::vector<Scene> mScenes;
 };
 

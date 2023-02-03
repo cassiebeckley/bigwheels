@@ -115,11 +115,14 @@ void ProjApp::Setup()
     // Entities
     {
         gltf::Asset asset = gltf::Asset::LoadFile(GetAssetPath("gltf/ABeautifulGame.glb"));
-        Geometry&   geo   = asset.GetMainScene().TempGetFirstGeometry();
-        SetupEntity(&geo, GeometryOptions::InterleavedU32().AddColor(), &mInterleavedU32);
-        SetupEntity(&geo, GeometryOptions::Interleaved().AddColor(), &mInterleaved);
-        SetupEntity(&geo, GeometryOptions::PlanarU32().AddColor(), &mPlanarU32);
-        SetupEntity(&geo, GeometryOptions::Planar().AddColor(), &mPlanar);
+
+        // TODO: load geometry buffers and textures from asset somehow
+        //       probably won't look much like the following but I left it for reference
+        // Geometry&   geo   = asset.GetMainScene().TempGetFirstGeometry();
+        // SetupEntity(&geo, GeometryOptions::InterleavedU32().AddColor(), &mInterleavedU32);
+        // SetupEntity(&geo, GeometryOptions::Interleaved().AddColor(), &mInterleaved);
+        // SetupEntity(&geo, GeometryOptions::PlanarU32().AddColor(), &mPlanarU32);
+        // SetupEntity(&geo, GeometryOptions::Planar().AddColor(), &mPlanar);
     }
 
     // Pipelines
