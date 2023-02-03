@@ -157,6 +157,9 @@ enum Result
     ERROR_GEOMETRY_FILE_NO_DATA            = -2501,
     ERROR_GEOMETRY_INVALID_VERTEX_SEMANTIC = -2502,
 
+    ERROR_GLTF_FILE_LOAD_FAILED    = -2600,
+    ERROR_GLTF_FILE_INVALID_FORMAT = -2601,
+
     ERROR_WINDOW_EVENTS_ALREADY_REGISTERED = -3000,
     ERROR_IMGUI_INITIALIZATION_FAILED      = -3001,
 
@@ -234,6 +237,9 @@ inline const char* ToString(ppx::Result value)
         case Result::ERROR_NO_INDEX_DATA                              : return "ERROR_NO_INDEX_DATA";
         case Result::ERROR_GEOMETRY_FILE_LOAD_FAILED                  : return "ERROR_GEOMETRY_FILE_LOAD_FAILED";
         case Result::ERROR_GEOMETRY_FILE_NO_DATA                      : return "ERROR_GEOMETRY_FILE_NO_DATA";
+
+        case Result::ERROR_GLTF_FILE_LOAD_FAILED                      : return "ERROR_GLTF_FILE_LOAD_FAILED";
+        case Result::ERROR_GLTF_FILE_INVALID_FORMAT                   : return "ERROR_GLTF_FILE_INVALID_FORMAT";
 
         case Result::ERROR_WINDOW_EVENTS_ALREADY_REGISTERED           : return "ERROR_WINDOW_EVENTS_ALREADY_REGISTERED";
         case Result::ERROR_IMGUI_INITIALIZATION_FAILED                : return "ERROR_IMGUI_INITIALIZATION_FAILED";

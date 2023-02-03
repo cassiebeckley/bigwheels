@@ -15,6 +15,7 @@
 #ifndef ppx_graphics_util_h
 #define ppx_graphics_util_h
 
+#include "ppx/gltf_asset.h"
 #include "ppx/grfx/grfx_image.h"
 #include "ppx/grfx/grfx_queue.h"
 #include "ppx/grfx/grfx_texture.h"

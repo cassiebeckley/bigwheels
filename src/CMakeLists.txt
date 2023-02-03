@@ -150,6 +150,7 @@ list(
     ${INC_DIR}/ppx/generate_mip_shader_DX.h
     ${INC_DIR}/ppx/generate_mip_shader_VK.h
     ${INC_DIR}/ppx/geometry.h
+    ${INC_DIR}/ppx/gltf_asset.h
     ${INC_DIR}/ppx/graphics_util.h
     ${INC_DIR}/ppx/imgui_impl.h
     ${INC_DIR}/ppx/log.h
@@ -181,6 +182,7 @@ list(
     ${SRC_DIR}/ppx/font.cpp
     ${SRC_DIR}/ppx/fs.cpp
     ${SRC_DIR}/ppx/geometry.cpp
+    ${SRC_DIR}/ppx/gltf_asset.cpp
     ${SRC_DIR}/ppx/graphics_util.cpp
     ${SRC_DIR}/ppx/imgui_impl.cpp
     ${SRC_DIR}/ppx/log.cpp
@@ -464,6 +466,7 @@ target_include_directories(
             ${PPX_THIRD_PARTY_DIR}/glfw/include
             ${PPX_THIRD_PARTY_DIR}/glm
             ${PPX_THIRD_PARTY_DIR}/gli
+            ${PPX_THIRD_PARTY_DIR}/json/single_include
             ${PPX_THIRD_PARTY_DIR}/stb
             ${PPX_THIRD_PARTY_DIR}/imgui
             ${PPX_THIRD_PARTY_DIR}/tinyobjloader
